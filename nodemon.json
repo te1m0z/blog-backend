@@ -1,0 +1,12 @@
+{
+    "exec": "ts-node --require tsconfig-paths/register src/index.ts",
+    "ext": "ts,json",
+    "ignore": [
+        "db",
+        "logs",
+        "node_modules"
+    ],
+    "watch": ["src"],
+    "inspect": true,
+    "verbose": true
+}

@@ -1,0 +1,35 @@
+{
+  "ts-node": {
+    "files": true
+  },
+  "files": [
+    "./global.d.ts"
+  ],
+  "compilerOptions": {
+    "lib": ["ES2015", "ES2016", "ES2018"],
+    "target": "ES6",
+    "module": "CommonJS",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+    },
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "**/*.ts",
+  ],
+  "exclude": [
+    ".git",
+    ".idea",
+    ".vscode",
+    "build",
+    "dist",
+    "docs",
+    "node_modules"
+  ]
+}
