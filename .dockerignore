@@ -1,0 +1,9 @@
+/README.md
+/Dockerfile
+/.gitignore
+/.dockerignore
+/.idea
+/node_modules
+/.git
+/.github
+/.env.example

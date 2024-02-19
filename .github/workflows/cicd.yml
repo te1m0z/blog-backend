@@ -1,0 +1,51 @@
+name: cicd
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+jobs:
+  docker:
+    name: Publish - Docker Hub
+    runs-on: ubuntu-20.04
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Build and Push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          build-args: |
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            JWT_ACCESS_EXPIRES=${{ secrets.JWT_ACCESS_EXPIRES }}
+            JWT_REFRESH_EXPIRES=${{ secrets.JWT_REFRESH_EXPIRES }}
+            EXPRESS_PORT=${{ secrets.EXPRESS_PORT }}
+            EXPRESS_SESSION_SECRET=${{ secrets.EXPRESS_SESSION_SECRET }}
+            EXPRESS_SESSION_MAX_AGE=${{ secrets.EXPRESS_SESSION_MAX_AGE }}
+            SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+            PRISMA_TEST_USER_LOGIN=${{ secrets.PRISMA_TEST_USER_LOGIN }}
+            PRISMA_TEST_USER_PASSWORD=${{ secrets.PRISMA_TEST_USER_PASSWORD }}
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/blog_backend:${{ github.ref_name }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/blog_backend:latest
+  redeploy:
+    name: Redeploy webhook call
+    runs-on: ubuntu-20.04
+    needs: [docker]
+    steps:
+      - name: Deploy docker container webhook
+        uses: joelwmale/webhook-action@master
+        with:
+          url: ${{ vars.REDEPLOY_WEBHOOK_URL }}
