@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+RUN npm run build
+
 ARG JWT_SECRET
 
 ARG JWT_ACCESS_EXPIRES
@@ -49,7 +51,5 @@ ENV PRISMA_TEST_USER_PASSWORD $PRISMA_TEST_USER_PASSWORD
 ENV NODE_ENV $NODE_ENV
 
 EXPOSE $PORT
-
-CMD npm run build
 
 CMD ["npm", "run", "dev"]
