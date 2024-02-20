@@ -50,6 +50,6 @@ ENV NODE_ENV $NODE_ENV
 
 EXPOSE $PORT
 
-CMD ["npm", "run", "build"]
+CMD npm run build
 
 CMD ["npm", "run", "dev"]
