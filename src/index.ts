@@ -5,6 +5,6 @@ import { Application } from '@/core/Application'
  */
 const App = new Application
 /**
- * Launch application
+ * Launch application 1
  */
 App.run()
