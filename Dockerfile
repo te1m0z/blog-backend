@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package*.json /app
 
-RUN npm ci --omit=dev
+RUN npm install
 
 COPY . .
 
@@ -49,9 +49,5 @@ ENV PRISMA_TEST_USER_PASSWORD $PRISMA_TEST_USER_PASSWORD
 ENV NODE_ENV $NODE_ENV
 
 EXPOSE $PORT
-
-CMD ["npx", "prisma", "migrate"]
-
-CMD ["npx", "prisma", "generate"]
 
 CMD ["npm", "run", "dev"]
