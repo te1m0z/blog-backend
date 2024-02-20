@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon",
     "eslint": "npx eslint src --fix",
+    "build": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
     "docs": "npx typedoc --entryPoints \"src/**/*\" --entryPointStrategy expand --out ./docs --plugin typedoc-theme-hierarchy --theme hierarchy"
   },
