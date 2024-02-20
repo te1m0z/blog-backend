@@ -50,4 +50,6 @@ ENV NODE_ENV $NODE_ENV
 
 EXPOSE $PORT
 
+CMD ["npx", "prisma", "generate"]
+
 CMD ["npm", "run", "dev"]
