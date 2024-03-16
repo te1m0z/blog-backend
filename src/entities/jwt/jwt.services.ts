@@ -3,41 +3,46 @@ import jwt, { type JwtPayload, type SignOptions } from 'jsonwebtoken'
 import moment from 'moment'
 import { v4 as uuid } from 'uuid'
 import { logError } from '@/config/logger'
-import { JWT_SECRET } from '@/config/env'
+import { JWT_SECRET, JWT_ACCESS_DAYS_ALIVE, JWT_ACCESS_SEC_EXPIRES } from '@/config/env'
 
-export type TCreateAccessPayload = JwtPayload & {
+// Базовый интерфейс создания JWT токенов
+export interface IBaseJwtPayload extends JwtPayload {
   iss: 'login' | 'regenerate_access'
-  // fingerprint: string
 }
 
-type TAccessTokenFunc = {
-    access_token: string
-    refresh_token: string
+interface ICreateTokensParams extends IBaseJwtPayload {
+  fingerprint: string
 }
 
-interface ICreateAccessParams extends TCreateAccessPayload {
-  // access_token: string
+interface ICreateTokensResponse {
+  access_token: string
+  refresh_token: string
 }
+
+interface ICreateAccessParams extends IBaseJwtPayload {}
 
 interface ICreateAccessTokenResponse {
   access_token: string
 }
 
-async function createTokens(payload: TCreateAccessPayload, options: SignOptions = {}): Promise<TAccessTokenFunc> {
+async function createTokens(payload: ICreateTokensParams, options: SignOptions = {}): Promise<ICreateTokensResponse> {
   //
   try {
     //
     const { sub, iss, fingerprint } = payload
     //
-    const nowInSec = moment().unix() // now date in seconds
+    const nowInSec = moment().unix() // current timestamp in seconds
     const jti = uuid() // unique ID of token
-    const die = nowInSec + 15 // when token will only be refreshed with refresh token
+
+    const durationToAdd = moment.duration(JWT_ACCESS_DAYS_ALIVE, 'days')
+    // when token will only be refreshed with refresh token
+    const die = moment.unix(nowInSec).add(durationToAdd).unix()
 
     // Public data of token
     const generatePayload: JwtPayload = {
-      iat: nowInSec, // дата и время создания jwt
+      iat: nowInSec, // timestamp создания jwt
       nbf: nowInSec, // после какого времени jwt валиден
-      exp: nowInSec + 3600, // до какого времени jwt валиден
+      exp: nowInSec + JWT_ACCESS_SEC_EXPIRES, // до какого времени jwt валиден
       jti,
       die,
     }
@@ -85,13 +90,16 @@ async function createAccessToken(
     //
     const nowInSec = moment().unix() // now date in seconds
     const jti = uuid() // unique ID of token
-    const die = nowInSec + 15 // when token will only be refreshed with refresh token
+    
+    const durationToAdd = moment.duration(JWT_ACCESS_DAYS_ALIVE, 'days')
+    // when token will only be refreshed with refresh token
+    const die = moment.unix(nowInSec).add(durationToAdd).unix()
 
     // Public data of token
     const generatePayload: JwtPayload = {
       iat: nowInSec, // дата и время создания jwt
       nbf: nowInSec, // после какого времени jwt валиден
-      exp: nowInSec + 3600, // до какого времени jwt валиден
+      exp: nowInSec + JWT_ACCESS_SEC_EXPIRES, // до какого времени jwt валиден
       jti,
       die,
     }
@@ -128,9 +136,9 @@ function isAccessTokenValid(token: string): boolean {
   }
 }
 
-function parseAccessToken(token: string): string | JwtPayload | null {
+function parseAccessToken(token: string): IBaseJwtPayload | null {
   try {
-    return jwt.decode(token)
+    return jwt.decode(token) as IBaseJwtPayload
   } catch (e) {
     return null
   }
