@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import { z, ZodError } from 'zod'
-import { wrongData, somethingWentWrong, csrfValidationFailed } from '@/helpers/http'
+import { forbidden, csrfValidationFailed } from '@/helpers/http'
 import { CsrfStorage } from '@/core/CsrfStorage'
 
 const MCsrfBodySchema = z.object({
@@ -18,22 +18,15 @@ function MCsrf(req: Request, res: Response, next: NextFunction) {
     //
     const { csrf } = MCsrfBodySchema.parse(req.body)
     // Старт проверки
-    const isValid = CsrfStorage.isValid(req.sessionID, csrf)
+    const isValid = CsrfStorage.isValid(csrf)
     //
-    if (isValid) {
-      next()
-      return
+    if (!isValid) {
+      throw null
     }
-    //
-    csrfValidationFailed(res)
-    //
-  } catch (error: unknown) {
-    //
-    if (error instanceof ZodError) {
-      return wrongData(res, error.issues)
-    }
-    //
-    return somethingWentWrong(res)
+    
+    next()
+  } catch {
+    return forbidden(res)
   }
 }
 

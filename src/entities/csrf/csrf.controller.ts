@@ -1,10 +1,9 @@
 import type { Request, Response } from 'express'
 import { ZodError } from 'zod'
 //
-//import { getAllPosts, getPostById } from './post.services'
 import { generateCsrfSchema } from './csrf.validation'
 import { wrongData, somethingWentWrong } from '@/helpers/http'
-import { generateCsrfToken } from './csrf.services'
+import { CsrfStorage } from '@/middlewares/csrf'
 
 abstract class CsrfController {
 
@@ -24,9 +23,7 @@ abstract class CsrfController {
       return somethingWentWrong(res)
     }
     //
-    const userSessionId = req.session.id
-    //
-    const csrfData = generateCsrfToken(userSessionId)
+    const csrfData = CsrfStorage.generate()
     //
     return res.json(csrfData)
   }

@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { hashSync } from 'bcrypt'
 import { z } from 'zod'
-import { wrongData } from '@/helpers/http'
+import { badRequest } from '@/helpers/http'
 
 type TFinger = {
     userAgent: string
@@ -28,18 +28,18 @@ function MFingerprint(req: Request, res: Response, next: NextFunction) {
     const { userAgent, localeLang, timeZone } = MFingerprintHeadersSchema.parse(req.headers)
     //
     if (!userAgent || !localeLang || !timeZone) {
-      throw 'to generate token it requires additional data'
+      throw null
     }
-    //
+    // Генерация отпечатка клиента
     const fingerprint = hashSync(`${userAgent}-${localeLang}-${timeZone}`, 5)
-    //
+    // установка в запрос дальше
     req.fingerprint = fingerprint
     //
     next()
     //
   } catch (error: unknown) {
     //
-    return wrongData(res)
+    return badRequest(res)
   }
 }
 

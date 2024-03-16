@@ -12,5 +12,7 @@ router.get(`/${ROUTE_PREFIX}`, MAuth,  UserController.getUser)
 
 router.post(`/${ROUTE_PREFIX}/login`, MFingerprint, MCsrf, UserController.login)
 
+router.post(`/${ROUTE_PREFIX}/access`, MFingerprint, MAuth, UserController.getNewAccessToken)
+
 export { router as userRouter }
 

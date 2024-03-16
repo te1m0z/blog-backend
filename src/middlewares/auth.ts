@@ -1,15 +1,10 @@
 import type { NextFunction, Request, Response } from 'express'
-import { z, ZodError } from 'zod'
-import { wrongData, somethingWentWrong, authorizationFailed } from '@/helpers/http'
-import { isAccessTokenValid } from '@/entities/jwt/jwt.services'
+import { z } from 'zod'
+import { authorizationFailed } from '@/helpers/http'
+import { parseAccessToken } from '@/entities/jwt/jwt.services'
 
 const MAuthBodySchema = z.object({
-  authorization: z.string({
-    required_error: 'must be provided',
-  })
-    .min(8, { // 'Bearer 1'
-      message: 'must be filled',
-    }),
+  authorization: z.string().min(8),
 })
 
 function MAuth(req: Request, res: Response, next: NextFunction) {
@@ -18,9 +13,6 @@ function MAuth(req: Request, res: Response, next: NextFunction) {
     //
     const { authorization } = MAuthBodySchema.parse(req.headers)
     //
-    if (!authorization) {
-      authorizationFailed(res)
-    }
     const bearer = authorization.split(' ')
     const accessToken = bearer[1]
     //
@@ -28,23 +20,18 @@ function MAuth(req: Request, res: Response, next: NextFunction) {
       authorizationFailed(res)
     }
     //
-    const isValid = isAccessTokenValid(accessToken)
+    const tokenData = parseAccessToken(accessToken)
     //
-    if (isValid) {
-      req.accessToken = accessToken
-      next()
-      return
+    if (!tokenData) {
+      throw null
     }
-    //
-    authorizationFailed(res)
-    //
-  } catch (error: unknown) {
-    //
-    if (error instanceof ZodError) {
-      return wrongData(res, error.issues)
-    }
-    //
-    return somethingWentWrong(res)
+
+    req.accessToken = accessToken
+    req.userId = Number(tokenData.sub)
+    
+    next()
+  } catch {
+    return authorizationFailed(res)
   }
 }
 

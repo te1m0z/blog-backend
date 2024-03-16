@@ -43,16 +43,23 @@ function wrongData(response: Response, issues?: ZodIssue[]) {
   const headers: THeader[] = []
   // Data in the response from the server
   const payload = {
-    status: false,
     errors: issues?.reduce((acc, { message, path }) => {
       acc[path.join('.')] = message
       return acc
     }, {} as Record<string, string>),
   }
-  // Setting headers for the response
+
   setHeaders(response, headers)
-  // Set response status code and print json
+
   response.status(RESPONSE_CODES.WRONG_DATA).json(payload)
+}
+
+function badRequest(response: Response) {
+  response.status(RESPONSE_CODES.BAD_REQUEST).end()
+}
+
+function forbidden(response: Response) {
+  response.status(RESPONSE_CODES.FORBIDDEN).end()
 }
 
 /**
@@ -130,20 +137,20 @@ function csrfValidationFailed(response: Response) {
 }
 
 function authorizationFailed(response: Response) {
-  // Set of headers corresponding to server response
-  const headers: THeader[] = []
-  // Data in the response from the server
-  const payload = {
-    status: false,
-  }
-  // Setting headers for the response
-  setHeaders(response, headers)
-  // Set response status code and print json
-  response.status(RESPONSE_CODES.UNAUTHORIZED).json(payload)
+  const errors = [
+    {
+      status: '401',
+      title: 'User is not logged in',
+    },
+  ]
+
+  response.status(RESPONSE_CODES.UNAUTHORIZED).json({ errors })
 }
 
 export {
   methodNotAllowed,
+  badRequest,
+  forbidden,
   wrongData,
   wrongLoginOrPassword,
   notFound,

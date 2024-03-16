@@ -1,9 +1,6 @@
 import type { Request, Response } from 'express'
 //import { ZodError } from 'zod'
-//
-//import { createAccessToken } from './jwt.services'
-//import { generateTestJwtSchema } from './jwt.validation'
-//
+
 import { somethingWentWrong } from '@/helpers/http'
 
 abstract class JwtController {
@@ -14,7 +11,7 @@ abstract class JwtController {
       //
       //const headers = generateTestJwtSchema.parse(req.headers)
       //
-      //const posts = await createAccessToken({ ...headers })
+      //const posts = await createTokens({ ...headers })
       //
       return res.json({ name: 'dima' })
     } catch (error: unknown) {

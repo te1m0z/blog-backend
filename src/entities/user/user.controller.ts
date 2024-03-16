@@ -5,7 +5,7 @@ import { userLogin } from './user.services'
 import { userLoginSchema } from './user.validation'
 //
 import { somethingWentWrong, wrongData, wrongLoginOrPassword } from '@/helpers/http'
-import { isAccessTokenValid, parseAccessToken } from '@/entities/jwt/jwt.services'
+import { parseAccessToken, createAccessToken } from '@/entities/jwt/jwt.services'
 import { prisma } from '@/prisma/client'
 
 abstract class UserController {
@@ -14,9 +14,7 @@ abstract class UserController {
     //
     try {
       //
-      const { fingerprint } = req
-      //
-      if (!fingerprint) throw 'login cannot be continued'
+      const fingerprint = req.fingerprint!
       //
       const { login, password } = userLoginSchema.parse(req.body)
       //
@@ -58,13 +56,38 @@ abstract class UserController {
       const user = await prisma.user.findUniqueOrThrow({ where: { id } })
 
       return res.status(200).json({
-        status: true,
         data: {
+          type: 'users',
           id: user.id,
-          login: user.login,
+          attributes: {
+            login: user.login,
+          },
         },
       })
     } catch (error: unknown) {
+      return somethingWentWrong(res)
+    }
+  }
+
+  static async getNewAccessToken(req: Request, res: Response) {
+    //
+    try {
+      //
+      const { access_token } = await createAccessToken({
+        sub: String(req.userId),
+        iss: 'regenerate_access',
+      })
+      //
+      return res.status(200).json({
+        data: {
+          type: 'tokens',
+          attributes: {
+            access_token,
+          },
+        },
+      })
+      //
+    } catch {
       return somethingWentWrong(res)
     }
   }

@@ -6,7 +6,8 @@ import { logError } from '@/config/logger'
 import { JWT_SECRET } from '@/config/env'
 
 export type TCreateAccessPayload = JwtPayload & {
-    fingerprint: string
+  iss: 'login' | 'regenerate_access'
+  // fingerprint: string
 }
 
 type TAccessTokenFunc = {
@@ -14,7 +15,15 @@ type TAccessTokenFunc = {
     refresh_token: string
 }
 
-async function createAccessToken(payload: TCreateAccessPayload, options: SignOptions = {}): Promise<TAccessTokenFunc> {
+interface ICreateAccessParams extends TCreateAccessPayload {
+  // access_token: string
+}
+
+interface ICreateAccessTokenResponse {
+  access_token: string
+}
+
+async function createTokens(payload: TCreateAccessPayload, options: SignOptions = {}): Promise<TAccessTokenFunc> {
   //
   try {
     //
@@ -65,6 +74,50 @@ async function createAccessToken(payload: TCreateAccessPayload, options: SignOpt
   }
 }
 
+async function createAccessToken(
+  payload: ICreateAccessParams,
+  options: SignOptions = {},
+): Promise<ICreateAccessTokenResponse> {
+  //
+  try {
+    //
+    const { sub, iss } = payload
+    //
+    const nowInSec = moment().unix() // now date in seconds
+    const jti = uuid() // unique ID of token
+    const die = nowInSec + 15 // when token will only be refreshed with refresh token
+
+    // Public data of token
+    const generatePayload: JwtPayload = {
+      iat: nowInSec, // дата и время создания jwt
+      nbf: nowInSec, // после какого времени jwt валиден
+      exp: nowInSec + 3600, // до какого времени jwt валиден
+      jti,
+      die,
+    }
+    //
+    if (sub) generatePayload.sub = sub
+    //
+    if (iss) generatePayload.iss = iss
+    //
+    const generateOptions: SignOptions = {
+      ...options,
+    }
+    //
+    const access_token = jwt.sign(generatePayload, JWT_SECRET, generateOptions)
+    //
+    return {
+      access_token,
+    }
+    //
+  } catch (error: unknown) {
+    //
+    logError('JWT::generate error:', error)
+    //
+    throw error
+  }
+}
+
 function isAccessTokenValid(token: string): boolean {
   try {
     jwt.verify(token, JWT_SECRET)
@@ -84,7 +137,8 @@ function parseAccessToken(token: string): string | JwtPayload | null {
 }
 
 export {
+  createTokens,
   createAccessToken,
   isAccessTokenValid,
-  parseAccessToken
+  parseAccessToken,
 }

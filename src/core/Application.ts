@@ -2,12 +2,11 @@ import type { Server } from 'node:http'
 import express, { type Express } from 'express'
 import { testDatabaseConnection } from '@/init/db'
 import { userRouter } from '@/entities/user/user.routes'
-import { postRouter } from '@/entities/post/post.routes'
+import { noteRouter } from '@/entities/note/note.routes'
 import { csrfRouter } from '@/entities/csrf/csrf.routes'
 import { jwtRouter } from '@/entities/jwt/jwt.routes'
 import { MGzip } from '@/middlewares/compression'
 import { MFatal } from '@/middlewares/error'
-import { MSession } from '@/middlewares/session'
 import { MCors } from '@/middlewares/cors'
 import { MJson } from '@/middlewares/json'
 import * as SentryHandlers from '@/middlewares/sentry'
@@ -52,12 +51,17 @@ class Application {
   //
   private bootstrap() {
     //
-    this.app.disable('x-powered-by')
+    // this.app.disable('x-powered-by')
     //
     initSentry(this.app)
     //
+    //  
     this.setupMiddlewares()
   }
+  //
+  // private setupHeaders() {
+  //   this.app.se
+  // }
   //
   private setupMiddlewares() {
     /* Sentry */
@@ -67,10 +71,10 @@ class Application {
     this.app.use(MJson)
     this.app.use(MGzip)
     this.app.use(MCors)
-    this.app.use(MSession)
+    // this.app.use(MSession)
     /* App routers */
     this.app.use(userRouter)
-    this.app.use(postRouter)
+    this.app.use(noteRouter)
     this.app.use(csrfRouter)
     this.app.use(jwtRouter)
     /* Uncaught error on the server */

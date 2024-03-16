@@ -1,6 +1,6 @@
 import { prisma } from '@/prisma/client'
 import { compareSync } from 'bcrypt'
-import { createAccessToken } from '@/entities/jwt/jwt.services'
+import { createTokens } from '@/entities/jwt/jwt.services'
 
 
 type TUserLoginArgs = {
@@ -19,7 +19,7 @@ async function userLogin(args: TUserLoginArgs) {
   //
   if (!isPasswordsMatch) throw null
   // Creating Access and Refresh tokens
-  const tokens = await createAccessToken({
+  const tokens = await createTokens({
     sub: String(user.id),
     iss: 'login',
     fingerprint,

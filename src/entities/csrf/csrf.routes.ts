@@ -14,7 +14,7 @@ const ROUTE_PREFIX = 'csrf'
 router.post(`/${ROUTE_PREFIX}/`, CsrfController.generate)
 //
 router.get(`/${ROUTE_PREFIX}/`, (req: Request, res: Response) => {
-  return res.json(CsrfStorage.get(req.session.id))
+  return res.json(CsrfStorage.storage)
 })
 
 export { router as csrfRouter }

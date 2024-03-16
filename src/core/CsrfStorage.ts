@@ -15,90 +15,47 @@ type TCsrfItem = {
   expires: number;
 };
 
-type TCsrfStorage = {
-  [key: string]: TCsrfItem[];
-};
-
 interface ICSRF {
-  readonly storage: TCsrfStorage;
-  isValid(userSessionId: string, csrfToken: string): boolean;
-  get(userSessionId: string): TCsrfItem[];
-  generate(userSessionId: string): TCsrfItem;
-  delete(userSessionId: string, csrfToken: string): void;
+  readonly storage: TCsrfItem[];
+  isValid(csrfToken: string): boolean;
+  generate(): TCsrfItem;
+  delete(csrfToken: string): void;
   deleteAllExpired(): void;
 }
 
 class CSRF implements ICSRF {
-  //
-  readonly storage: TCsrfStorage = {}
+  
+  readonly storage: TCsrfItem[] = []
 
-  /**
-   * Вернуть набор CSRF токенов юзера по его Session ID
-   * в противном случае пустой массив
-   * @param {string} userSessionId - ID сессии
-   * @returns {TCsrfItem[]}
-   */
-  get(userSessionId: string): TCsrfItem[] {
-    //
-    if (!this.storage[userSessionId]) {
-      this.storage[userSessionId] = []
-    }
-    //
-    return this.storage[userSessionId]
-  }
-
-  /**
-   * Сгенерировать уникальный CSRF токен
-   * @param {string} userSessionId - ID сессии
-   * @returns {TCsrfItem}
-   */
-  generate(userSessionId: string): TCsrfItem {
-    //
-    const userCsrfTokens = this.get(userSessionId)
-    //
+  generate(): TCsrfItem {
     const csrfData: TCsrfItem = {
       token: uuid(),
       expires: Date.now() + 60 * 60 * 1000,
     }
-    //
-    userCsrfTokens.push(csrfData)
-    //
+
+    this.storage.push(csrfData)
+    
     return csrfData
   }
 
-  delete(userSessionId: string, csrfToken: string) {
-    //
-    const userCsrfTokens = this.get(userSessionId)
-    //
-    if (userCsrfTokens.length === 0) return
-    // find
-    const csrfDeleteIndex = userCsrfTokens.findIndex(({ token }) => token === csrfToken)
+  delete(csrfToken: string) {
+    const csrfDeleteIndex = this.storage.findIndex(({ token }) => token === csrfToken)
     //
     if (csrfDeleteIndex === -1) return
     //
-    userCsrfTokens.splice(csrfDeleteIndex, 1)
+    this.storage.splice(csrfDeleteIndex, 1)
   }
 
   deleteAllExpired() {
-    for (const userCsrfTokens of Object.values(this.storage)) {
-      //
-      const filteredTokens = userCsrfTokens.filter(
-        ({ expires }) => expires < Date.now(),
-      )
-      //
-      userCsrfTokens.splice(0, userCsrfTokens.length, ...filteredTokens)
-    }
+    this.storage.forEach((tokenData, index) => {
+      if (tokenData.expires < Date.now()) {
+        this.storage.splice(index, 1)
+      }
+    })
   }
 
-  isValid(userSessionId: string, csrfToken: string) {
-    //
-    const userCsrfTokens = this.get(userSessionId)
-    //
-    if (!userCsrfTokens.length) return false
-    // find
-    const csrfIsValidData = userCsrfTokens.find(
-      ({ token }) => token === csrfToken,
-    )
+  isValid(csrfToken: string) {
+    const csrfIsValidData = this.storage.find(({ token }) => token === csrfToken)
     //
     if (!csrfIsValidData) return false
     //
