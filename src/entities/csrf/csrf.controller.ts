@@ -25,7 +25,10 @@ abstract class CsrfController {
     //
     const csrfData = CsrfStorage.generate()
     //
-    return res.json(csrfData)
+    return res.status(201).json({
+      status: true,
+      data: csrfData,
+    })
   }
 }
 
