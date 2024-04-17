@@ -1,5 +1,8 @@
 import type { Server } from 'node:http'
 import express, { type Express } from 'express'
+import morgan from 'morgan'
+import { type WriteStream, createWriteStream } from 'node:fs'
+import { join, dirname } from 'node:path'
 import { testDatabaseConnection } from '@/init/db'
 import { userRouter } from '@/entities/user/user.routes'
 import { noteRouter } from '@/entities/note/note.routes'
@@ -19,11 +22,15 @@ class Application {
   private app: Express
   //
   private server: Server | undefined
+  //
+  private logFileStream: WriteStream | null
   
   /**
    * Creates App instance.
    */
   public constructor() {
+    //
+    this.logFileStream = createWriteStream('./access.txt', { flags: 'a' })
     //
     this.init()
     //
@@ -64,6 +71,9 @@ class Application {
   // }
   //
   private setupMiddlewares() {
+    /* Logs */
+    // @ts-expect-error: Unreachable code error
+    this.app.use(morgan('combined', { stream: this.logFileStream }))
     /* Sentry */
     this.app.use(SentryHandlers.MSentryRequestHandler)
     this.app.use(SentryHandlers.MSentryTracingHandler)
