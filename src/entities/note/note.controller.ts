@@ -10,24 +10,32 @@ abstract class NoteController {
 
   static async all(req: Request, res: Response) {
     const schema = z.object({
-      page: z.string().min(1).nullish(),
+      page: z.string().nullish().transform((page) => {
+        if (!page) {
+          return 1
+        }
+
+        const parsed = parseInt(page, 10)
+
+        if (isNaN(parsed) || parsed <= 0) {
+          return 1
+        }
+
+        return parsed
+      }),
     })
     //
     try {
       //
-      const query = schema.parse(req.query)
-      let page = 1
+      const { page } = schema.parse(req.query)
       //
-      if (query.page) {
-        page = parseInt(query.page)
-      }
-      //
-      const posts = await getAllPosts(page)
+      const { notes, total } = await getAllPosts(page)
       //
       return res.json({
-        data: posts,
+        data: notes,
         meta: {
           page,
+          total,
         },
       })
       //

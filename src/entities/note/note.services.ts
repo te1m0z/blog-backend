@@ -1,16 +1,25 @@
 import { prisma } from '@/prisma/client'
 
+
 async function getAllPosts(page = 1) {
   const perPage = 3
   const offset = (page - 1) * perPage
 
-  return prisma.post.findMany({
-    skip: offset,
-    take: perPage,
-    orderBy: {
-      createdAt: 'desc',
-    },
-  })
+  const [notes, total] = await prisma.$transaction([
+    prisma.post.findMany({
+      skip: offset,
+      take: perPage,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    }),
+    prisma.post.count(),
+  ])
+
+  return {
+    notes,
+    total: Math.ceil(total / perPage),
+  }
 }
 
 async function getPostById(id: number) {

@@ -39,7 +39,7 @@ async function main() {
   //   data: postsData,
   // });
   //
-  for (const _ of Array(10)) {
+  for (const _ of Array(100)) {
     //
     const data = randomPostData()
     //
