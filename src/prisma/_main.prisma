@@ -34,7 +34,7 @@ model Post {
     createdAt  DateTime @default(now())
     updatedAt  DateTime @default(now())
 
-    @@map("posts")
+    @@map("notes")
 }
 
 model Category {

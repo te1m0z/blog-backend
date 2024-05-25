@@ -2,7 +2,7 @@ import { prisma } from '@/prisma/client'
 
 
 async function getAllPosts(page = 1) {
-  const perPage = 3
+  const perPage = 9
   const offset = (page - 1) * perPage
 
   const [notes, total] = await prisma.$transaction([
