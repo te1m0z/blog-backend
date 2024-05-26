@@ -8,7 +8,7 @@ const ROUTE_PREFIX = 'note'
 
 router.get(`/${ROUTE_PREFIX}/`, NoteController.all)
 
-router.get(`/${ROUTE_PREFIX}/:id`, NoteController.getById)
+router.get(`/${ROUTE_PREFIX}/:slug`, NoteController.getBySlug)
 
 router.post(`/${ROUTE_PREFIX}/`, MAuth, NoteController.create)
 

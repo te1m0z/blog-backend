@@ -2,12 +2,11 @@ import type { Request, Response } from 'express'
 import { ZodError, z } from 'zod'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 //
-import { getAllPosts, getPostBySlug, createNote } from './note.services'
-import { getPostByIdSchema } from './note.validation'
+import { getAllLabs, getLabBySlug, createNote } from './services'
 //
 import { wrongData, somethingWentWrong, notFound } from '@/helpers/http'
 
-abstract class NoteController {
+abstract class LaboratoryController {
 
   static async all(req: Request, res: Response) {
     const schema = z.object({
@@ -24,38 +23,31 @@ abstract class NoteController {
 
         return parsed
       }),
-      category: z.string().nullish(),
     })
     //
     try {
       //
-      const { page, category } = schema.parse(req.query)
+      const { page } = schema.parse(req.query)
       //
-      const { notes, totalPages, pageSize, totalItems } = await getAllPosts(page, category)
+      const { labs, totalPages, pageSize, totalItems } = await getAllLabs(page)
       //
       return res.json({
-        data: notes.map((note) => ({
-          type: 'notes',
-          id: note.id,
+        data: labs.map((lab) => ({
+          type: 'laboratory',
+          id: lab.id,
           attributes: {
-            title: note.title,
-            content: note.content,
-            slug: note.slug,
-            published: note.published,
-            createdAt: note.createdAt,
-            updatedAt: note.updatedAt,
+            title: lab.title,
+            content: lab.content,
+            slug: lab.slug,
+            published: lab.published,
+            createdAt: lab.createdAt,
+            updatedAt: lab.updatedAt,
           },
           relationships: {
             user: {
               data: {
                 type: 'users',
-                id: note.userId,
-              },
-            },
-            category: {
-              data: {
-                type: 'categories',
-                id: note.categoryId,
+                id: lab.userId,
               },
             },
           },
@@ -79,36 +71,33 @@ abstract class NoteController {
   }
 
   static async getBySlug(req: Request, res: Response) {
+    const schema = z.object({
+      slug: z.string().min(1).max(30),
+    })
     //
     try {
       //
-      const { slug } = getPostByIdSchema.parse(req.params)
+      const { slug } = schema.parse(req.params)
       //
-      const note = await getPostBySlug(slug)
+      const lab = await getLabBySlug(slug)
       //
       return res.json({
         data: {
-          type: 'note',
-          id: note.id,
+          type: 'laboratory',
+          id: lab.id,
           attributes: {
-            title: note.title,
-            content: note.content,
-            slug: note.slug,
-            published: note.published,
-            createdAt: note.createdAt,
-            updatedAt: note.updatedAt,
+            title: lab.title,
+            content: lab.content,
+            slug: lab.slug,
+            published: lab.published,
+            createdAt: lab.createdAt,
+            updatedAt: lab.updatedAt,
           },
           relationships: {
             user: {
               data: {
                 type: 'user',
-                id: note.userId,
-              },
-            },
-            category: {
-              data: {
-                type: 'category',
-                id: note.categoryId,
+                id: lab.userId,
               },
             },
           },
@@ -193,5 +182,5 @@ abstract class NoteController {
 }
 
 export {
-  NoteController,
+  LaboratoryController,
 }

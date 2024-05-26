@@ -11,21 +11,22 @@ datasource db {
 }
 
 model User {
-    id        Int         @id @default(autoincrement())
-    login     String      @unique
-    password  String
-    posts     Post[]
-    Portfolio Portfolio[]
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @default(now())
+    id           Int         @id @default(autoincrement())
+    login        String      @unique
+    password     String
+    notes        Note[]
+    laboratories Laboratory[]
+    createdAt    DateTime    @default(now())
+    updatedAt    DateTime    @default(now())
 
     @@map("users")
 }
 
-model Post {
+model Note {
     id         Int      @id @default(autoincrement())
     title      String
     content    String
+    slug       String   @unique
     published  Boolean  @default(true)
     user       User     @relation(fields: [userId], references: [id])
     userId     Int
@@ -40,15 +41,17 @@ model Post {
 model Category {
     id    Int    @id @default(autoincrement())
     name  String
-    posts Post[]
+    slug  String @unique
+    notes Note[]
 
     @@map("categories")
 }
 
-model Portfolio {
+model Laboratory {
     id           Int      @id @default(autoincrement())
     title        String
     content      String
+    slug         String   @unique
     previewText  String?
     previewImage String?
     published    Boolean  @default(true)
@@ -57,23 +60,23 @@ model Portfolio {
     createdAt    DateTime @default(now())
     updatedAt    DateTime @default(now())
 
-    @@map("portfolios")
+    @@map("laboratories")
 }
 
 model JwtAccessToken {
-    id  Int      @id @default(autoincrement())
-    jti String
+    id         Int      @id @default(autoincrement())
+    jti        String
     fingerprint String
-    expires DateTime
+    expires    DateTime
 
     @@map("jwt_access_tokens")
 }
 
 model JwtRefreshToken {
-    id  Int      @id @default(autoincrement())
-    jti String
+    id         Int      @id @default(autoincrement())
+    jti        String
     fingerprint String
-    expires DateTime
+    expires    DateTime
 
     @@map("jwt_refresh_tokens")
 }

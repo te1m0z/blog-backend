@@ -1,17 +1,12 @@
 import { prisma } from '@/prisma/client'
 
 
-async function getAllPosts(page = 1, category: string | null = null) {
+export async function getAllLabs(page = 1) {
   const perPage = 9
   const offset = (page - 1) * perPage
 
-  const where = {
-    ...(category && { category: { slug: category } }),
-  }
-
-  const [notes, total] = await prisma.$transaction([
-    prisma.note.findMany({
-      where,
+  const [labs, total] = await prisma.$transaction([
+    prisma.laboratory.findMany({
       skip: offset,
       take: perPage,
       orderBy: {
@@ -19,30 +14,21 @@ async function getAllPosts(page = 1, category: string | null = null) {
       },
       include: {
         user: true,
-        category: true,
       },
     }),
-    prisma.note.count({ where }),
+    prisma.laboratory.count(),
   ])
 
   return {
-    notes,
+    labs,
     totalPages: Math.ceil(total / perPage),
     pageSize: perPage,
     totalItems: total,
   }
 }
 
-async function getPostById(id: number) {
-  return prisma.note.findUniqueOrThrow({
-    where: {
-      id,
-    },
-  })
-}
-
-async function getPostBySlug(slug: string) {
-  return prisma.note.findUniqueOrThrow({
+export async function getLabBySlug(slug: string) {
+  return prisma.laboratory.findUniqueOrThrow({
     where: {
       slug,
     },
@@ -65,8 +51,5 @@ async function createNote(params: ICreateNoteParams) {
 }
 
 export {
-  getAllPosts,
-  getPostById,
-  getPostBySlug,
   createNote,
 }

@@ -15,6 +15,7 @@ const userData: Prisma.UserCreateInput = {
 
 const categoryData: Prisma.CategoryCreateInput = {
   name: faker.lorem.words({ min: 1, max: 3 }),
+  slug: faker.lorem.slug(2),
 }
 
 async function main() {
@@ -23,10 +24,11 @@ async function main() {
   //
   const category = await prisma.category.create({ data: categoryData })
   //
-  const randomPostData = (): Prisma.PostCreateInput => {
+  const randomNoteData = (): Prisma.NoteCreateInput => {
     return {
       title: faker.lorem.sentence(),
       content: faker.lorem.paragraphs(5),
+      slug: faker.lorem.slug(4),
       user: { connect: { id: user.id } },
       category: { connect: { id: category.id } },
     }
@@ -39,22 +41,25 @@ async function main() {
   //   data: postsData,
   // });
   //
+  // eslint-disable-next-line no-unused-vars
   for (const _ of Array(100)) {
     //
-    const data = randomPostData()
+    const data = randomNoteData()
     //
-    await prisma.post.create({ data })
+    await prisma.note.create({ data })
   }
 }
 
-main()
-  .then(() => {
-    console.log(`Seeder ${FILE_NAME} successfully done!`)
-  })
-  .catch((e) => {
-    console.log(`Error in ${FILE_NAME} seeder: `, e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+export const runNote = async () => {
+  await main()
+    .then(() => {
+      console.log(`Seeder ${FILE_NAME} successfully done!`)
+    })
+    .catch((e) => {
+      console.log(`Error in ${FILE_NAME} seeder: `, e)
+      process.exit(1)
+    })
+    .finally(async () => {
+      await prisma.$disconnect()
+    })
+}

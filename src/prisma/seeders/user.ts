@@ -21,18 +21,18 @@ const userData: Prisma.UserCreateInput = {
 async function main() {
   //
   await prisma.user.create({ data: userData })
-  //
 }
 
-main()
-  .then(() => {
-    console.log(`Seeder ${FILE_NAME} successfully done!`)
-  })
-  .catch((e) => {
-    console.log(`Error in ${FILE_NAME} seeder: `, e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
-
+export const runUser = async () => {
+  await main()
+    .then(() => {
+      console.log(`Seeder ${FILE_NAME} successfully done!`)
+    })
+    .catch((e) => {
+      console.log(`Error in ${FILE_NAME} seeder: `, e)
+      process.exit(1)
+    })
+    .finally(async () => {
+      await prisma.$disconnect()
+    })
+}

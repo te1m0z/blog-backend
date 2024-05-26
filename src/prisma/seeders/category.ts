@@ -9,6 +9,7 @@ const prisma = new PrismaClient()
 
 const categoryData: Prisma.CategoryCreateInput = {
   name: faker.lorem.words({ min: 1, max: 3 }),
+  slug: faker.lorem.slug(2),
 }
 
 async function main() {
@@ -17,14 +18,16 @@ async function main() {
   //
 }
 
-main()
-  .then(() => {
-    console.log(`Seeder ${FILE_NAME} successfully done!`)
-  })
-  .catch((e) => {
-    console.log(`Error in ${FILE_NAME} seeder: `, e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+export const runCategory = async () => {
+  await main()
+    .then(() => {
+      console.log(`Seeder ${FILE_NAME} successfully done!`)
+    })
+    .catch((e) => {
+      console.log(`Error in ${FILE_NAME} seeder: `, e)
+      process.exit(1)
+    })
+    .finally(async () => {
+      await prisma.$disconnect()
+    })
+}
