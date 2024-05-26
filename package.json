@@ -1,12 +1,14 @@
 {
-  "name": "te1m0z-blog-server",
+  "name": "te1m0z-blog-backend",
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "build": "npx tsc",
+    "start": "ts-node src/main.ts",
+    "serve": "node build/main.js",
     "dev": "cross-env NODE_ENV=development nodemon",
     "lint": "npx eslint src",
     "eslint": "npx eslint src --fix",
-    "build": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
     "docs": "npx typedoc --entryPoints \"src/**/*\" --entryPointStrategy expand --out ./docs --plugin typedoc-theme-hierarchy --theme hierarchy",
     "prepare": "husky"
