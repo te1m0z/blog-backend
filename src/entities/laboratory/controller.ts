@@ -2,7 +2,7 @@ import type { Request, Response } from 'express'
 import { ZodError, z } from 'zod'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 //
-import { getAllLabs, getLabBySlug, createNote } from './services'
+import { getAllLabs, getLabBySlug, createLab } from './services'
 //
 import { wrongData, somethingWentWrong, notFound } from '@/helpers/http'
 
@@ -120,43 +120,35 @@ abstract class LaboratoryController {
       title: z.string().min(1),
       content: z.string().min(1),
       slug: z.string().min(1),
-      categoryId: z.number().nonnegative(),
     })
     //
     try {
       //
-      const { title, content, slug, categoryId } = schema.parse(req.body)
+      const { title, content, slug } = schema.parse(req.body)
       //
-      const createdNote = await createNote({
+      const createdLab = await createLab({
         title,
         content,
         slug,
-        categoryId,
       })
       //
       return res.status(201).json({
         data: {
-          type: 'notes',
-          id: createdNote.id,
+          type: 'laboratory',
+          id: createdLab.id,
           attributes: {
-            title: createdNote.title,
-            content: createdNote.content,
-            slug: createdNote.slug,
-            published: createdNote.published,
-            createdAt: createdNote.createdAt,
-            updatedAt: createdNote.updatedAt,
+            title: createdLab.title,
+            content: createdLab.content,
+            slug: createdLab.slug,
+            published: createdLab.published,
+            createdAt: createdLab.createdAt,
+            updatedAt: createdLab.updatedAt,
           },
           relationships: {
             user: {
               data: {
                 type: 'users',
-                id: createdNote.userId,
-              },
-            },
-            category: {
-              data: {
-                type: 'categories',
-                id: createdNote.categoryId,
+                id: createdLab.userId,
               },
             },
           },

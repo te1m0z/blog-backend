@@ -35,21 +35,16 @@ export async function getLabBySlug(slug: string) {
   })
 }
 
-interface ICreateNoteParams {
+interface ICreateLabParams {
   title: string
   content: string
   slug: string
-  categoryId: number
 }
 
-async function createNote(params: ICreateNoteParams) {
-  const { title, content, slug, categoryId } = params
+export async function createLab(params: ICreateLabParams) {
+  const { title, content, slug } = params
   // Try to get user from db, otherwise throw error
-  const note = await prisma.note.create({ data: { title, content, slug, categoryId, userId: 1 } })
+  const note = await prisma.laboratory.create({ data: { title, content, slug, userId: 1 } })
   // Preparing data to get back to client's browser
   return note
-}
-
-export {
-  createNote,
 }
