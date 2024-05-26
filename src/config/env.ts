@@ -12,8 +12,6 @@ type TEnvVarKey =
   | 'JWT_ACCESS_SEC_EXPIRES'
   | 'JWT_REFRESH_EXPIRES'
   | 'EXPRESS_PORT'
-  | 'EXPRESS_SESSION_SECRET'
-  | 'EXPRESS_SESSION_MAX_AGE'
   | 'SENTRY_DSN';
 
 /**
@@ -37,6 +35,4 @@ export const JWT_ACCESS_DAYS_ALIVE = parseInt(getEnvVar('JWT_ACCESS_DAYS_ALIVE')
 export const JWT_ACCESS_SEC_EXPIRES = parseInt(getEnvVar('JWT_ACCESS_SEC_EXPIRES'))
 export const JWT_REFRESH_EXPIRES = parseInt(getEnvVar('JWT_REFRESH_EXPIRES'))
 export const EXPRESS_PORT = getEnvVar('EXPRESS_PORT')
-export const EXPRESS_SESSION_SECRET = getEnvVar('EXPRESS_SESSION_SECRET')
-export const EXPRESS_SESSION_MAX_AGE = parseInt(getEnvVar('EXPRESS_SESSION_MAX_AGE'))
 export const SENTRY_DSN = getEnvVar('SENTRY_DSN')
