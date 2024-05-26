@@ -21,15 +21,6 @@
     "skipLibCheck": true
   },
   "include": [
-    "**/*.ts",
+    "src/**/*.ts",
   ],
-  "exclude": [
-    ".git",
-    ".idea",
-    ".vscode",
-    "build",
-    "dist",
-    "docs",
-    "node_modules"
-  ]
 }

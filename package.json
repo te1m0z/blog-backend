@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon",
+    "lint": "npx eslint src",
     "eslint": "npx eslint src --fix",
     "build": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
-    "docs": "npx typedoc --entryPoints \"src/**/*\" --entryPointStrategy expand --out ./docs --plugin typedoc-theme-hierarchy --theme hierarchy"
+    "docs": "npx typedoc --entryPoints \"src/**/*\" --entryPointStrategy expand --out ./docs --plugin typedoc-theme-hierarchy --theme hierarchy",
+    "prepare": "husky"
   },
   "prisma": {
     "schema": "src/prisma/_main.prisma",
@@ -63,6 +65,9 @@
     "zod": "3.22.2"
   },
   "devDependencies": {
-    "@types/morgan": "^1.9.9"
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "@types/morgan": "^1.9.9",
+    "husky": "^9.0.11"
   }
 }

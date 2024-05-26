@@ -1,4 +1,5 @@
-enum RESPONSE_CODES {
+/* eslint-disable no-unused-vars */
+export enum RESPONSE_CODES {
   /* Successful 2XX */
   SUCCESS = 200,
   CREATED = 201,
@@ -12,8 +13,6 @@ enum RESPONSE_CODES {
   /* Server errors 5XX */
   SOMETHING_WENT_WRONG = 500,
 }
-
-export { RESPONSE_CODES }
 
 // enum RESPONSE_MESSAGES {
 //   SUCCESS = "Succesfully completed",
