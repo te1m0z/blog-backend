@@ -2,7 +2,7 @@ import type { Request, Response } from 'express'
 import { ZodError, z } from 'zod'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 //
-import { getAllPosts, getPostBySlug, createNote } from './note.services'
+import { getAllPosts, getPostBySlug, createNote, updateNoteBySlug } from './note.services'
 import { getPostByIdSchema } from './note.validation'
 //
 import { wrongData, somethingWentWrong, notFound } from '@/helpers/http'
@@ -131,18 +131,17 @@ abstract class NoteController {
       title: z.string().min(1),
       content: z.string().min(1),
       slug: z.string().min(1),
-      categoryId: z.number().nonnegative(),
+      // categoryId: z.number().nonnegative(),
     })
     //
     try {
       //
-      const { title, content, slug, categoryId } = schema.parse(req.body)
+      const { title, content, slug } = schema.parse(req.body)
       //
       const createdNote = await createNote({
         title,
         content,
-        slug,
-        categoryId,
+        slug
       })
       //
       return res.status(201).json({
@@ -168,6 +167,69 @@ abstract class NoteController {
               data: {
                 type: 'categories',
                 id: createdNote.categoryId,
+              },
+            },
+          },
+        },
+      })
+      //
+    } catch (error: unknown) {
+      //
+      if (error instanceof ZodError) {
+        return wrongData(res, error.issues)
+      }
+      if (error instanceof PrismaClientKnownRequestError) {
+        return res.status(500).json({
+          error: 'Database error',
+          message: error.message,
+          details: error.meta,
+        })
+      }
+      //
+      return somethingWentWrong(res)
+    }
+  }
+
+  static async update(req: Request, res: Response) {
+    //
+    const schema = z.object({
+      slug: z.string().max(100),
+      title: z.string().min(1),
+      content: z.string().min(1),
+    })
+    //
+    try {
+      //
+      const { slug, title, content } = schema.parse(req.body)
+      //
+      const updatedNote = await updateNoteBySlug(slug, {
+        title,
+        content,
+      })
+      //
+      return res.status(200).json({
+        data: {
+          type: 'notes',
+          id: updatedNote.id,
+          attributes: {
+            title: updatedNote.title,
+            content: updatedNote.content,
+            slug: updatedNote.slug,
+            published: updatedNote.published,
+            createdAt: updatedNote.createdAt,
+            updatedAt: updatedNote.updatedAt,
+          },
+          relationships: {
+            user: {
+              data: {
+                type: 'users',
+                id: updatedNote.userId,
+              },
+            },
+            category: {
+              data: {
+                type: 'categories',
+                id: updatedNote.categoryId,
               },
             },
           },

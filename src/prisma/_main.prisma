@@ -39,10 +39,13 @@ model Note {
 }
 
 model Category {
-    id    Int    @id @default(autoincrement())
-    name  String
-    slug  String @unique
-    notes Note[]
+    id       Int        @id @default(autoincrement())
+    name     String
+    slug     String     @unique
+    notes    Note[]
+    parentId Int?
+    parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+    children Category[] @relation("CategoryToCategory")
 
     @@map("categories")
 }

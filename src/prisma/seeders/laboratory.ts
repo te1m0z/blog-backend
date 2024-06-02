@@ -14,8 +14,6 @@ const userData: Prisma.UserCreateInput = {
 }
 
 async function main() {
-  // const user = await prisma.user.create({ data: userData })
-  // console.log(user.id)
   //
   const randomLaboratoryData = (): Prisma.LaboratoryCreateInput => {
     return {

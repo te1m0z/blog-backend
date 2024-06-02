@@ -12,5 +12,7 @@ router.get(`/${ROUTE_PREFIX}/:slug`, NoteController.getBySlug)
 
 router.post(`/${ROUTE_PREFIX}/`, MAuth, NoteController.create)
 
+router.patch(`/${ROUTE_PREFIX}/`, MAuth, NoteController.update)
+
 export { router as noteRouter }
 

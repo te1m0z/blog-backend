@@ -1,21 +1,23 @@
 import 'dotenv/config'
 import { basename } from 'node:path'
-import { PrismaClient, type Prisma } from '@prisma/client'
-import { faker } from '@faker-js/faker'
+import { PrismaClient } from '@prisma/client'
 
 const FILE_NAME = basename(__filename)
 
 const prisma = new PrismaClient()
 
-const categoryData: Prisma.CategoryCreateInput = {
-  name: faker.lorem.words({ min: 1, max: 3 }),
-  slug: faker.lorem.slug(2),
-}
-
 async function main() {
-  //
-  await prisma.category.create({ data: categoryData })
-  //
+  const js = await prisma.category.create({ data: { name: 'JavaScript', slug: 'js' } })
+  const ts = await prisma.category.create({ data: { name: 'TypeScript', slug: 'ts' } })
+  const php = await prisma.category.create({ data: { name: 'PHP', slug: 'php' } })
+  await prisma.category.create({ data: { name: 'OOP', slug: 'oop' } })
+  await prisma.category.create({ data: { name: 'Browser', slug: 'browser' } })
+  
+  // await prisma.category.create({ data: { name: 'React', slug: 'react', parentId: js.id } })
+  await prisma.category.create({ data: { name: 'React', slug: 'react', parentId: js.id } })
+  await prisma.category.create({ data: { name: 'Vue', slug: 'vue', parentId: js.id } })
+  
+  await prisma.category.create({ data: { name: 'Laravel', slug: 'laravel', parentId: php.id } })
 }
 
 export const runCategory = async () => {

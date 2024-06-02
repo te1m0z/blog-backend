@@ -6,6 +6,7 @@ import express, { type Express } from 'express'
 import { testDatabaseConnection } from '@/init/db'
 import { userRouter } from '@/entities/user/user.routes'
 import { noteRouter } from '@/entities/note/note.routes'
+import { categoryRouter } from '@/entities/category/routes'
 import { laboratoryRouter } from '@/entities/laboratory/routes'
 import { csrfRouter } from '@/entities/csrf/csrf.routes'
 import { jwtRouter } from '@/entities/jwt/jwt.routes'
@@ -85,6 +86,7 @@ class Application {
     /* App routers */
     this.app.use(userRouter)
     this.app.use(noteRouter)
+    this.app.use(categoryRouter)
     this.app.use(laboratoryRouter)
     this.app.use(csrfRouter)
     this.app.use(jwtRouter)

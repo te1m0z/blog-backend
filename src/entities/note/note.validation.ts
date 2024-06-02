@@ -9,7 +9,7 @@ type TGetPostsSchema = z.infer<typeof getPostsSchema>;
 /* GET : /posts/:id */
 const getPostByIdSchema = z
   .object({
-    slug: z.string().min(1).max(20),
+    slug: z.string().min(1).max(100),
     // id: z.string().min(1).refine((val) => isSolidInt(val)).transform((val) => parseInt(val)),
   })
   .strict()
