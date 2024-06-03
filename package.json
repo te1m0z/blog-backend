@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "ts-node src/main.ts",
-    "serve": "node build/main.js",
+    "serve": "NODE_ENV=production node dist/index.js",
     "dev": "cross-env NODE_ENV=development nodemon",
     "lint": "npx eslint src",
     "eslint": "npx eslint src --fix",
@@ -20,6 +20,9 @@
   "engines": {
     "node": ">=18.17.1",
     "npm": ">=9.6.7"
+  },
+  "_moduleAliases": {
+    "@": "./dist"
   },
   "dependencies": {
     "@faker-js/faker": "8.0.2",
@@ -69,7 +72,9 @@
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
+    "@types/module-alias": "^2.0.4",
     "@types/morgan": "^1.9.9",
-    "husky": "^9.0.11"
+    "husky": "^9.0.11",
+    "module-alias": "^2.2.3"
   }
 }

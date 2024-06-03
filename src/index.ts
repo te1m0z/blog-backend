@@ -1,3 +1,5 @@
+import 'module-alias/register'
+
 import { Application } from '@/core/Application'
 
 /**
