@@ -6,7 +6,7 @@
     "build": "npx tsc",
     "start": "ts-node src/main.ts",
     "serve": "NODE_ENV=production node dist/index.js",
-    "dev": "cross-env NODE_ENV=development nodemon",
+    "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --transpile-only --files -r tsconfig-paths/register src/server.ts",
     "lint": "npx eslint src",
     "eslint": "npx eslint src --fix",
     "prisma:migrate": "npx prisma migrate dev",
@@ -14,15 +14,12 @@
     "prepare": "husky"
   },
   "prisma": {
-    "schema": "src/prisma/_main.prisma",
-    "seed": "ts-node src/prisma/seed.ts"
+    "schema": "prisma/_main.prisma",
+    "seed": "ts-node prisma/seed.ts"
   },
   "engines": {
     "node": ">=18.17.1",
     "npm": ">=9.1.0"
-  },
-  "_moduleAliases": {
-    "@": "./dist"
   },
   "dependencies": {
     "@faker-js/faker": "8.0.2",
@@ -59,6 +56,7 @@
     "morgan": "1.10.0",
     "nodemon": "3.0.1",
     "prisma": "5.1.1",
+    "redis": "^4.6.14",
     "ts-node": "10.9.1",
     "tsconfig-paths": "4.2.0",
     "typedoc": "^0.25.1",
@@ -75,6 +73,7 @@
     "@types/module-alias": "^2.0.4",
     "@types/morgan": "^1.9.9",
     "husky": "^9.0.11",
-    "module-alias": "^2.2.3"
+    "module-alias": "^2.2.3",
+    "ts-node-dev": "^2.0.0"
   }
 }

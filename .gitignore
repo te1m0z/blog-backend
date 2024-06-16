@@ -135,4 +135,4 @@ dist
 db/
 
 # Prisma
-src/prisma/migrations/
+prisma/migrations/

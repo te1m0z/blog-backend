@@ -1,7 +1,7 @@
 import type { Response } from 'express'
 import type { ZodIssue } from 'zod'
 import { RESPONSE_CODES } from '@/constants/http'
-import type { THeader } from '@/interfaces/http'
+import type { THeader } from '@/interfaces/IHttp'
 
 /**
  * Sets the server response headers

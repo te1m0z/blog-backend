@@ -1,8 +1,4 @@
 {
-  "ts-node": {
-    "files": true
-  },
-  "files": ["./global.d.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -18,6 +14,6 @@
     "strict": true,
     "sourceMap": true
   },
-  "include": ["src/**/*"],
+  "include": ["src", "./global.d.ts"],
   "exclude": ["node_modules"]
 }
