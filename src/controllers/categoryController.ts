@@ -11,7 +11,26 @@ export abstract class CategoryController {
     try {
       const categories = await categoryService.getAllCategories();
       //
-      return res.json(categories);
+      return res.json(
+        categories.map((category) => ({
+          type: 'category',
+          id: category.id,
+          attributes: {
+            name: category.name,
+            slug: category.slug
+          },
+          ...(category.parentId && {
+            relationships: {
+              category: {
+                data: {
+                  type: 'category',
+                  id: category.parentId
+                }
+              }
+            }
+          })
+        }))
+      );
       //
     } catch (error: unknown) {
       //

@@ -1,3 +1,5 @@
+import 'tsconfig-paths/register';
+
 import { app } from './app';
 import { EXPRESS_PORT } from './config/enviroment';
 
