@@ -5,7 +5,7 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 const prisma = globalForPrisma.prisma || new PrismaClient({
     datasources: {
         db: {
-            url: 'file:../../../db/sqlite3.db'
+            url: 'file:../db/sqlite3.db'
         }
     }
 });
