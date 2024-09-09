@@ -1,85 +1,85 @@
 // Модели для БД
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 // SQLite3: sqlite | file:../path/to/main.db
 datasource db {
-    provider = "sqlite"
-    url      = "file:../../db/sqlite3.db"
+  provider = "sqlite"
+  url      = "file:../../db/database.sqlite"
 }
 
 model User {
-    id           Int         @id @default(autoincrement())
-    login        String      @unique
-    password     String
-    notes        Note[]
-    laboratories Laboratory[]
-    createdAt    DateTime    @default(now())
-    updatedAt    DateTime    @default(now())
+  id           Int          @id @default(autoincrement())
+  login        String       @unique
+  password     String
+  notes        Note[]
+  laboratories Laboratory[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @default(now())
 
-    @@map("users")
+  @@map("users")
 }
 
 model Note {
-    id         Int      @id @default(autoincrement())
-    title      String
-    content    String
-    slug       String   @unique
-    published  Boolean  @default(true)
-    user       User     @relation(fields: [userId], references: [id])
-    userId     Int
-    category   Category @relation(fields: [categoryId], references: [id])
-    categoryId Int
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  slug       String   @unique
+  published  Boolean  @default(true)
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 
-    @@map("notes")
+  @@map("notes")
 }
 
 model Category {
-    id       Int        @id @default(autoincrement())
-    name     String
-    slug     String     @unique
-    notes    Note[]
-    parentId Int?
-    parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
-    children Category[] @relation("CategoryToCategory")
+  id       Int        @id @default(autoincrement())
+  name     String
+  slug     String     @unique
+  notes    Note[]
+  parentId Int?
+  parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryToCategory")
 
-    @@map("categories")
+  @@map("categories")
 }
 
 model Laboratory {
-    id           Int      @id @default(autoincrement())
-    title        String
-    content      String
-    slug         String   @unique
-    previewText  String?
-    previewImage String?
-    published    Boolean  @default(true)
-    user         User     @relation(fields: [userId], references: [id])
-    userId       Int
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  title        String
+  content      String
+  slug         String   @unique
+  previewText  String?
+  previewImage String?
+  published    Boolean  @default(true)
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
 
-    @@map("laboratories")
+  @@map("laboratories")
 }
 
 model JwtAccessToken {
-    id         Int      @id @default(autoincrement())
-    jti        String
-    fingerprint String
-    expires    DateTime
+  id          Int      @id @default(autoincrement())
+  jti         String
+  fingerprint String
+  expires     DateTime
 
-    @@map("jwt_access_tokens")
+  @@map("jwt_access_tokens")
 }
 
 model JwtRefreshToken {
-    id         Int      @id @default(autoincrement())
-    jti        String
-    fingerprint String
-    expires    DateTime
+  id          Int      @id @default(autoincrement())
+  jti         String
+  fingerprint String
+  expires     DateTime
 
-    @@map("jwt_refresh_tokens")
+  @@map("jwt_refresh_tokens")
 }
